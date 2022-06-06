@@ -80,6 +80,7 @@ void setup()
   }
   else{
     Serial.println("First Time Start!");
+    //if its first time, clear the counts
     data->first = 0;
     data->count = 0;
     rtcMemory.save();
@@ -101,6 +102,8 @@ BLYNK_CONNECTED(){
 }
 
 //OTA switch
+//decides if sleep should be overridden or not.
+//Device should not sleep if being reprovisioned or OTA flashed.
 BLYNK_WRITE(V1){
   updateMode = param.asInt();
   if(updateMode == 0){
@@ -111,12 +114,14 @@ BLYNK_WRITE(V1){
 }
 
 //Tank Height
+//sets the tank's total height
 BLYNK_WRITE(V6){
    Height = param.asInt();
    Serial.println("Im in V6");
 }
 
 //Tank Fill Percentage
+//multiplies percentage by tank height to get alert level height
 BLYNK_WRITE(V7){
   InitVal = param.asInt();
   threshold = Height - (((InitVal/25.5)/10.0)*Height);
